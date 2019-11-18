@@ -32,6 +32,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import java.text.NumberFormat;
 import java.util.Date;
@@ -55,8 +56,8 @@ public class SensorListener extends Service implements SensorEventListener {
 
     public final static int NOTIFICATION_ID = 1;
     private final static long MICROSECONDS_IN_ONE_MINUTE = 60000000;
-    private final static long SAVE_OFFSET_TIME = AlarmManager.INTERVAL_HOUR;
-    private final static int SAVE_OFFSET_STEPS = 500;
+    private final static long SAVE_OFFSET_TIME = 2000;
+    private final static int SAVE_OFFSET_STEPS = 2;
 
     private static int steps;
     private static int lastSaveSteps;
@@ -74,7 +75,7 @@ public class SensorListener extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(final SensorEvent event) {
         if (event.values[0] > Integer.MAX_VALUE) {
-            if (BuildConfig.DEBUG) Logger.log("probably not a real value: " + event.values[0]);
+            //if (BuildConfig.DEBUG) Logger.log("probably not a real value: " + event.values[0]);
             return;
         } else {
             steps = (int) event.values[0];
@@ -104,6 +105,9 @@ public class SensorListener extends Service implements SensorEventListener {
                 }
             }
             db.saveCurrentSteps(steps);
+            //Toast.makeText(getApplicationContext(), "")
+            Toast.makeText(getApplicationContext(), "Acquiring Data from Sensor:" + "\n" +
+                    " TYPE_STEP_COUNTER" + "\n" + "Target Class: de.j4velin.pedometer.Database", Toast.LENGTH_SHORT).show();
             db.close();
             lastSaveSteps = steps;
             lastSaveTime = System.currentTimeMillis();
